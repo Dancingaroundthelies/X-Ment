@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from twitter_scrapper import get_tweets, get_thread_tweets
@@ -5,6 +6,10 @@ from sentiment import analyze_sentiment
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route("/")
+def home():
+    return "API is running! Available endpoints: /tweets, /thread, /analyze"
 
 @app.route("/tweets", methods=["GET"])
 def fetch_tweets():
@@ -50,5 +55,5 @@ def analyze():
 
 
 if __name__ == "__main__":
-    print("🚀 API is running at http://127.0.0.1:5000/")
-    app.run(debug=True)
+    PORT = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=PORT)
