@@ -1,6 +1,7 @@
 flask
 flask-cors
 selenium
+textblob
 webdriver-manager
 requests
 bs4
