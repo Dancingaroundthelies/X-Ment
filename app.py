@@ -13,18 +13,24 @@ def home():
 
 @app.route("/tweets", methods=["GET"])
 def fetch_tweets():
-    keyword = request.args.get("keyword", "")
-    count = int(request.args.get("count", 5))
+    try:
+        keyword = request.args.get("keyword", "")
+        count = int(request.args.get("count", 5))
+
+        if not keyword:
+            return jsonify({"error": "Keyword is required"}), 400
+
+        tweets = get_tweets(keyword, count)
+
+        if not tweets or "error" in tweets[0]:
+            return jsonify({"error": "No tweets found"}), 404
+
+        return jsonify(tweets)
     
-    if not keyword:
-        return jsonify({"error": "Keyword is required"}), 400
-    
-    tweets = get_tweets(keyword, count)
-    
-    if not tweets or "error" in tweets[0]:
-        return jsonify({"error": "No tweets found"}), 404
-    
-    return jsonify(tweets)
+    except Exception as e:
+        error_message = f"🔥 ERROR in /tweets: {str(e)}"
+        print(error_message)  # This will show in logs
+        return jsonify({"error": "Internal Server Error", "details": error_message}), 500
 
 @app.route("/thread", methods=["GET"])
 def fetch_thread():
